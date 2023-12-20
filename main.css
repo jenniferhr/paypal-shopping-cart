@@ -1,0 +1,25 @@
+body {
+  margin-left: 50px;
+  margin-right: 50px;
+  font-family: sans-serif;
+}
+
+h1 {
+  text-align: center;
+}
+
+section {
+  margin-bottom: 50px;
+}
+
+.product-image {
+  height: 150px;
+  width: auto;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.product-info {
+  display: inline-block;
+  margin-left: 20px;
+}
