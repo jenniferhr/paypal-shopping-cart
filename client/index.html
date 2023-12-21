@@ -6,7 +6,6 @@
   <title>Shopping Cart</title>
   <meta name='viewport' content='width=device-width, initial-scale=1'>
   <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
-  <!-- <script src='main.js'></script> -->
 </head>
 <body>
   <div class="container">
@@ -59,7 +58,13 @@
       </form>
     </section>
 
+    <div id="paypal-button-container"></div>
+    <p id="result-message"></p>
+
   </div>
-  
+  <script src="https://www.paypal.com/sdk/js?client-id=Aegi8IoeaecEOa52l_XVFEAy5VcIQA482HX5jjOiUsZ0379snmPpuzvjHNqdWD5lF_aDDtBKsGtZnEs5&currency=USD"></script>
+  <script src="main.js"></script>
+  <script src="../server.js"></script>
+
 </body>
 </html>
