@@ -36,7 +36,8 @@ const generateAccessToken = async () => {
 };
 
 const createOrder = async (cart) => {
-  const accessToken = await generateAccessToken();
+  try {
+    const accessToken = await generateAccessToken();
   const url = `${PAYPAL_ENDPOINT_URL}/v2/checkout/orders`;
   const payload = {
     intent: "CAPTURE",
@@ -84,23 +85,39 @@ const createOrder = async (cart) => {
     method: "POST",
     body: JSON.stringify(payload),
   });
+
+  if (!response.ok) {
+      throw new Error(`Failed to create order. Status: ${response.status}`);
+    }
   
   return handleResponse(response);
+  } catch (err) {
+    throw err;
+  }
+  
 };
 
 const captureOrder = async (orderID) => {
-  const accessToken = await generateAccessToken();
-  const url = `${PAYPAL_ENDPOINT_URL}/v2/checkout/orders/${orderID}/capture`;
+  try {
+    const accessToken = await generateAccessToken();
+    const url = `${PAYPAL_ENDPOINT_URL}/v2/checkout/orders/${orderID}/capture`;
 
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
-  return handleResponse(response);
+    if (!response.ok) {
+      throw new Error(`Failed to capture order. Status: ${response.status}`);
+    }
+
+    return handleResponse(response);
+  } catch (err) {
+    throw err
+  }
 };
 
 async function handleResponse(response) {

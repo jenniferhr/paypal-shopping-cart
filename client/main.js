@@ -37,18 +37,18 @@ window.paypal
       .then((order) => order.id);
     },
     onApprove(data) {
-    return fetch(`/api/orders/${data.orderID}/capture`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+      return fetch(`/api/orders/${data.orderID}/capture`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
     .then((response) => response.json())
     .then((details) => {
       // aqui que eu vou colocar a página de thank you provavelmente
       alert('Transaction completed by ' + details.payer.name.given_name);
     });
-  }
+    }
   })
   .render("#paypal-button-container");
 
