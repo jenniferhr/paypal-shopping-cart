@@ -1,6 +1,12 @@
 window.paypal
   .Buttons({
     createOrder() {
+      const form = document.getElementById('buyers-info-form');
+      if (!form.checkValidity()) {
+        alert('Please, fill all fields correctly.');
+        return null;
+      }
+
       const firstName = document.getElementById('first-name');
       const lastName = document.getElementById('last-name');
       const email = document.getElementById('email');
