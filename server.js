@@ -4,7 +4,7 @@ require('dotenv').config();
 
 const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PORT, PAYPAL_ENDPOINT_URL } = process.env;
 
-app.use(express.static("client"));
+app.use(express.static("."));
 app.use(express.json());
 
 
@@ -156,7 +156,7 @@ app.post("/api/orders/:orderID/capture", async (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.sendFile(path.resolve("./client/index.html"));
+  res.sendFile(path.resolve("./index.html"));
 });
 
 app.listen(PORT, () => {
