@@ -11,7 +11,7 @@
   <div class="container">
     <h1>Shopping Cart</h1>
 
-    <section class="product-info">
+    <section class="product-info" id="product-info">
       <div class="product">
         <h2>Your Items</h2>
         <img src="images/white-shirt.jpg" alt="Man wearing white T-shirt" class="product-image">
@@ -24,7 +24,7 @@
       </div>      
     </section>
 
-    <section class="buyers-info">
+    <section class="buyers-info" id="buyers-info">
       <h2>Buyer's Information</h2>
       <form action="" class="buyers-info-form">
         <label for="first-name">First Name:</label>
@@ -60,8 +60,13 @@
       </form>
     </section>
 
+    <section class="thank-you-message" id="thank-you-message" style="display: none">
+      <h2>Thank you!</h2>
+      <p>We really appreciate your purchase. <br> Your order was successfully placed and you will soon receive more information by email.</p>
+      <p id="transaction-id"></p>
+    </section>
+
     <div id="paypal-button-container"></div>
-    <p id="result-message"></p>
 
   </div>
   <script src="https://www.paypal.com/sdk/js?client-id=Aegi8IoeaecEOa52l_XVFEAy5VcIQA482HX5jjOiUsZ0379snmPpuzvjHNqdWD5lF_aDDtBKsGtZnEs5&currency=USD"></script>

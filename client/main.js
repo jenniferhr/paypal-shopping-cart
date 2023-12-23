@@ -44,15 +44,14 @@ window.paypal
         },
       })
     .then((response) => response.json())
-    .then((details) => {
-      // aqui que eu vou colocar a página de thank you provavelmente
-      alert('Transaction completed by ' + details.payer.name.given_name);
+    .then((details)=>{
+      document.getElementById('buyers-info').style.display = 'none';
+      document.getElementById('paypal-button-container').style.display = 'none';
+      console.log(details)
+      document.getElementById('thank-you-message').style.display = 'block';
+      document.getElementById('transaction-id').innerText =
+            'Transaction id: ' + details.id;
     });
     }
   })
   .render("#paypal-button-container");
-
-function resultMessage(message) {
-  const container = document.querySelector("#result-message");
-  container.innerHTML = message;
-}
