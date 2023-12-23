@@ -2,9 +2,7 @@ const express = require('express')
 const app = express(); 
 require('dotenv').config();
 
-
-const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PORT } = process.env;
-const base = "https://api-m.sandbox.paypal.com";
+const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PORT, PAYPAL_ENDPOINT_URL } = process.env;
 
 app.use(express.static("client"));
 app.use(express.json());
@@ -22,7 +20,7 @@ const generateAccessToken = async () => {
     const auth = Buffer.from(
       PAYPAL_CLIENT_ID + ":" + PAYPAL_CLIENT_SECRET,
     ).toString("base64");
-    const response = await fetch(`${base}/v1/oauth2/token`, {
+    const response = await fetch(`${PAYPAL_ENDPOINT_URL}/v1/oauth2/token`, {
       method: "POST",
       body: "grant_type=client_credentials",
       headers: {
@@ -38,57 +36,67 @@ const generateAccessToken = async () => {
 };
 
 const createOrder = async (cart) => {
-  // use the cart information passed from the front-end to calculate the purchase unit details
-  console.log(
-    "shopping cart information passed from the frontend createOrder() callback:",
-    cart,
-  );
-
   const accessToken = await generateAccessToken();
-  const url = `${base}/v2/checkout/orders`;
+  const url = `${PAYPAL_ENDPOINT_URL}/v2/checkout/orders`;
   const payload = {
     intent: "CAPTURE",
     purchase_units: [
       {
         amount: {
           currency_code: "USD",
-          value: "100.00",
+          value: "10.00",
         },
+        payee: {
+          email_address: "sb-isvxd28892102@business.example.com",
+        }
       },
     ],
-  };
+    payment_source: {
+      paypal: {
+        email_address: cart.email,
+        name: {
+          given_name: cart.firstName,
+          surname: cart.lastName,
+        },
+        phone: {
+          phone_number: {
+            national_number: cart.phoneNumber,
+          },
+        },
+        address: {
+          address_line_1: cart.addressLine1,
+          address_line_2: cart.addressLine2,
+          postal_code: cart.zipCode,
+          admin_area_1: cart.state,
+          country_code: cart.country,
+        },
+      },
+    },
+  }
+
+  console.log(JSON.stringify(payload))
 
   const response = await fetch(url, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
-      // Uncomment one of these to force an error for negative testing (in sandbox mode only). Documentation:
-      // https://developer.paypal.com/tools/sandbox/negative-testing/request-headers/
-      // "PayPal-Mock-Response": '{"mock_application_codes": "MISSING_REQUIRED_PARAMETER"}'
-      // "PayPal-Mock-Response": '{"mock_application_codes": "PERMISSION_DENIED"}'
-      // "PayPal-Mock-Response": '{"mock_application_codes": "INTERNAL_SERVER_ERROR"}'
     },
     method: "POST",
     body: JSON.stringify(payload),
   });
-
+  
   return handleResponse(response);
 };
 
 const captureOrder = async (orderID) => {
   const accessToken = await generateAccessToken();
-  const url = `${base}/v2/checkout/orders/${orderID}/capture`;
+  const url = `${PAYPAL_ENDPOINT_URL}/v2/checkout/orders/${orderID}/capture`;
 
   const response = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
-      // Uncomment one of these to force an error for negative testing (in sandbox mode only). Documentation:
-      // https://developer.paypal.com/tools/sandbox/negative-testing/request-headers/
-      // "PayPal-Mock-Response": '{"mock_application_codes": "INSTRUMENT_DECLINED"}'
-      // "PayPal-Mock-Response": '{"mock_application_codes": "TRANSACTION_REFUSED"}'
-      // "PayPal-Mock-Response": '{"mock_application_codes": "INTERNAL_SERVER_ERROR"}'
     },
   });
 
@@ -110,9 +118,8 @@ async function handleResponse(response) {
 
 app.post("/api/orders", async (req, res) => {
   try {
-    // use the cart information passed from the front-end to calculate the order amount detals
     const { cart } = req.body;
-    const { jsonResponse, httpStatusCode } = await createOrder(cart);
+    const { jsonResponse, httpStatusCode } = await createOrder(req.body);
     res.status(httpStatusCode).json(jsonResponse);
   } catch (error) {
     console.error("Failed to create order:", error);
@@ -136,5 +143,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`servidor rodando em http://localhost:${PORT}`)
+  console.log(`server successfully running in http://localhost:${PORT}`)
 })

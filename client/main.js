@@ -1,43 +1,57 @@
 window.paypal
   .Buttons({
-    // sets up the details of the transaction, is called when the buyer clicks the PayPal button
     createOrder() {
-          return fetch("http://localhost:3000/create-order", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              cart: [
-                {
-                  sku: "YOUR_PRODUCT_STOCK_KEEPING_UNIT",
-                  quantity: "YOUR_PRODUCT_QUANTITY",
-                },
-              ]
-            })
-          })
-          .then((response) => response.json())
-          .then((order) => order.id);
+      const firstName = document.getElementById('first-name');
+      const lastName = document.getElementById('last-name');
+      const email = document.getElementById('email');
+      const phoneNumber = document.getElementById('phone-number');
+      const addressLine1 = document.getElementById('address-line-1');
+      const addressLine2 = document.getElementById('address-line-2');
+      const state = document.getElementById('state');
+      const zipCode = document.getElementById('zip-code');
+      const country = document.getElementById('country');
+      return fetch("http://localhost:3000/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-    // called after the buyer approves the transaction on paypal.com
-    onApprove(data) {
-    // This function captures the funds from the transaction.
-    return fetch("http://localhost:3000/capture-paypal-order", {
-      method: "POST",
-      body: JSON.stringify({
-        orderID: data.orderID
+        body: JSON.stringify({
+          firstName: firstName.value,
+          lastName: lastName.value,
+          email: email.value,
+          phoneNumber: phoneNumber.value,
+          addressLine1: addressLine1.value,
+          addressLine2: addressLine2.value,
+          state: state.value,
+          zipCode: zipCode.value,
+          country: country.value,
+          cart: [
+            {
+              sku: "0001",
+              quantity: "1",
+            },
+          ]
+        })
       })
+      .then((response) => response.json())
+      .then((order) => order.id);
+    },
+    onApprove(data) {
+    return fetch(`/api/orders/${data.orderID}/capture`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
     })
     .then((response) => response.json())
     .then((details) => {
-      // This function shows a transaction success message to your buyer.
+      // aqui que eu vou colocar a página de thank you provavelmente
       alert('Transaction completed by ' + details.payer.name.given_name);
     });
   }
   })
   .render("#paypal-button-container");
 
-// Example function to show a result to the user. Your site's UI library can be used instead.
 function resultMessage(message) {
   const container = document.querySelector("#result-message");
   container.innerHTML = message;
