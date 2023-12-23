@@ -10,7 +10,7 @@ window.paypal
       const state = document.getElementById('state');
       const zipCode = document.getElementById('zip-code');
       const country = document.getElementById('country');
-      return fetch("http://localhost:3000/api/orders", {
+      return fetch(`/api/orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
